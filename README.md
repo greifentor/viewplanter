@@ -30,3 +30,8 @@ mvn clean install
 ```
 
 on your preferred shell tool.
+
+
+## Run
+
+THERE IS NOTHING TO START CURRENTLY !!! :)
