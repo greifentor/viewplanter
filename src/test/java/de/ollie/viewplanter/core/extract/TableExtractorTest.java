@@ -1,4 +1,4 @@
-package de.ollie.viewplanter.core;
+package de.ollie.viewplanter.core.extract;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import de.ollie.viewplanter.core.extract.TableExtractor;
 import de.ollie.viewplanter.core.model.TableData;
 
 @ExtendWith(MockitoExtension.class)

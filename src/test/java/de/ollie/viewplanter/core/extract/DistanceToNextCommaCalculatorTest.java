@@ -1,4 +1,4 @@
-package de.ollie.viewplanter.core;
+package de.ollie.viewplanter.core.extract;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import de.ollie.viewplanter.core.extract.DistanceToNextCommaCalculator;
 
 @ExtendWith(MockitoExtension.class)
 class DistanceToNextCommaCalculatorTest {
