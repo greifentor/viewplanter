@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -14,6 +15,7 @@ public interface ViewInfoReaderPort {
 
 	@Accessors(chain = true)
 	@Data
+	@Generated
 	public class Parameters {
 
 		@Getter(AccessLevel.NONE)
@@ -26,13 +28,15 @@ public interface ViewInfoReaderPort {
 			return this;
 		}
 
-		public Optional<Object> findByName(String name) {
-			return Optional.empty();
+		public Optional<String> findValueByNameAsString(String name) {
+			return Optional.ofNullable((String) values.get(name));
 		}
 
 	}
 
+	@Accessors(chain = true)
 	@Data
+	@Generated
 	public static class ViewInfoData {
 
 		private String name;
