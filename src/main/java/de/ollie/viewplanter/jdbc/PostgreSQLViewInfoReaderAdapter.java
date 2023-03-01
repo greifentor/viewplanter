@@ -25,12 +25,16 @@ public class PostgreSQLViewInfoReaderAdapter implements ViewInfoReaderPort {
 					jdbcConnectionData.getUserName(),
 					jdbcConnectionData.getPassword());
 			statement = connection.createStatement();
-			String sql = "select viewname as name, definition as view_statement from pg_catalog.pg_views where schemaname = '"
+			String sql =
+					"select viewname as view_name, definition as view_statement from pg_catalog.pg_views where schemaname = '"
 					+ jdbcConnectionData.getSchemeName() + "'";
 			resultSet = statement
 					.executeQuery(sql);
 			while (resultSet.next()) {
-				result.add(new ViewInfoData().setName(resultSet.getString("name"))
+				result
+						.add(
+								new ViewInfoData()
+										.setName(resultSet.getString("view_name"))
 						.setViewStatement(resultSet.getString("view_statement")));
 			}
 		} catch (Exception e) {

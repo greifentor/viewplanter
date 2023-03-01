@@ -27,7 +27,7 @@ public class ViewDependencyInformationCollector {
 	public synchronized List<ViewData> collectViewDependencyInformation() {
 		clearFoundViews();
 		readViewInfos();
-		forEachViewInfo(this::processToViewData);
+		forEachReadViewInfo(this::processToViewData);
 		setViewReferences();
 		return convertFoundViewsToSortedList();
 	}
@@ -40,7 +40,7 @@ public class ViewDependencyInformationCollector {
 		viewInfos = viewInfoReaderPort.read(parameters);
 	}
 
-	private void forEachViewInfo(Consumer<ViewInfoData> processor) {
+	private void forEachReadViewInfo(Consumer<ViewInfoData> processor) {
 		viewInfos.forEach(processor::accept);
 	}
 
