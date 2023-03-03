@@ -1,4 +1,4 @@
-package de.ollie.viewplanter.core;
+package de.ollie.viewplanter.core.extract;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +20,8 @@ public class TableExtractorTest {
 	private static final TableData TABLE_A = new TableData().setName("TableA");
 	private static final TableData TABLE_B = new TableData().setName("TableB");
 	private static final TableData TABLE_C = new TableData().setName("TableC");
+	private static final TableData WITH_C = new TableData().setName("WithAB");
+	private static final TableData WITH_VIEW_B = new TableData().setName("WithViewB");
 
 	@InjectMocks
 	private TableExtractor unitUnderTest;
@@ -44,46 +46,49 @@ public class TableExtractorTest {
 
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithNaturalJoin() {
-			assertEquals(
-					List.of(TABLE_A, TABLE_B),
+			assertEquals(List.of(TABLE_A, TABLE_B),
 					unitUnderTest.extract("select * from " + TABLE_A.getName() + ", " + TABLE_B.getName()));
 		}
 
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithNaturalJoinAndAliases() {
-			assertEquals(
-					List.of(TABLE_A, TABLE_B),
+			assertEquals(List.of(TABLE_A, TABLE_B),
 					unitUnderTest.extract("select * from " + TABLE_A.getName() + " a, " + TABLE_B.getName() + " b"));
 		}
 
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithAThreeTableNaturalJoin() {
-			assertEquals(
-					List.of(TABLE_A, TABLE_B, TABLE_C),
-					unitUnderTest
-							.extract(
-									"select * from " + TABLE_A.getName() + ", " + TABLE_B.getName() + ", "
-											+ TABLE_C.getName()));
+			assertEquals(List.of(TABLE_A, TABLE_B, TABLE_C),
+					unitUnderTest.extract("select * from " + TABLE_A.getName() + ", " + TABLE_B.getName() + ", "
+							+ TABLE_C.getName()));
 		}
 
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithAJoin() {
-			assertEquals(
-					List.of(TABLE_A, TABLE_B),
-					unitUnderTest
-							.extract(
-									"select * from " + TABLE_A.getName() + " join " + TABLE_B.getName()
-											+ " on a.id = b.id"));
+			assertEquals(List.of(TABLE_A, TABLE_B),
+					unitUnderTest.extract(
+							"select * from " + TABLE_A.getName() + " join " + TABLE_B.getName() + " on a.id = b.id"));
 		}
 
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithAJoinAndParenthizes() {
-			assertEquals(
-					List.of(TABLE_A, TABLE_B),
-					unitUnderTest
-							.extract(
-									"select * from (" + TABLE_A.getName() + " join " + TABLE_B.getName()
-											+ " on a.id = b.id)"));
+			assertEquals(List.of(TABLE_A, TABLE_B),
+					unitUnderTest.extract(
+							"select * from (" + TABLE_A.getName() + " join " + TABLE_B.getName() + " on a.id = b.id)"));
+		}
+
+		@Test
+		void returnsACorrectListWithTableData_passingASelectStatementWithAFromFollowedByASelect() {
+			assertEquals(List.of(TABLE_A, TABLE_B),
+					unitUnderTest.extract(
+							"select * from (select x from " + TABLE_A.getName() + ", " + TABLE_B.getName() + ")"));
+		}
+
+		@Test
+		void returnsACorrectListWithTableData_passingASelectStatementWithAJoinFollowedByASelect() {
+			assertEquals(List.of(TABLE_A, TABLE_B),
+					unitUnderTest.extract("select * from (" + TABLE_A.getName() + " join ( select * from "
+							+ TABLE_B.getName() + ") on a.id = sid)"));
 		}
 
 	}

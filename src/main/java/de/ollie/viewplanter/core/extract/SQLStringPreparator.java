@@ -1,4 +1,4 @@
-package de.ollie.viewplanter.core;
+package de.ollie.viewplanter.core.extract;
 
 public class SQLStringPreparator {
 
