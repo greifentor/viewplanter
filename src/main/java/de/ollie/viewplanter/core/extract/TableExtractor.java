@@ -52,6 +52,10 @@ public class TableExtractor {
 
 	private void addTable(Set<TableData> tables, String tableName) {
 		if (!SELECT.equalsIgnoreCase(tableName)) {
+			tableName = tableName.replace("`", "");
+			if (tableName.toUpperCase().startsWith("TEST.")) {
+				tableName = tableName.substring("TEST.".length());
+			}
 			tables.add(newTableData(tableName));
 		}
 	}

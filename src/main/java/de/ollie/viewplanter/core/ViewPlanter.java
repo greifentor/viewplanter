@@ -73,7 +73,7 @@ public class ViewPlanter {
 	}
 
 	private String createViewDefinition(String name) {
-		return "entity (" + name + ") << (V, yellow >>";
+		return "view(" + name + ") {}";
 	}
 
 	private String createMatchingDefinition(DatabaseObject dbo) {
@@ -84,7 +84,7 @@ public class ViewPlanter {
 	}
 
 	private String createTableDefinition(String name) {
-		return "entity (" + name + ") << (T, white) >>";
+		return "table(" + name + ") {}";
 	}
 
 	private String[] relationsBetweenTheViewsAndTables() {
