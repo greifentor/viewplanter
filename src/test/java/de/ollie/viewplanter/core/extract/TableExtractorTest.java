@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,7 +91,6 @@ public class TableExtractorTest {
 							+ TABLE_B.getName() + ") on a.id = sid)"));
 		}
 
-		@Disabled
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithAWithStatement() {
 			assertEquals(List.of(TABLE_A, TABLE_B, TABLE_C),
@@ -101,10 +99,9 @@ public class TableExtractorTest {
 									+ TABLE_A.getName() + " join " + TABLE_B.getName() + " on a.id = b.id)"));
 		}
 
-		@Disabled
 		@Test
 		void returnsACorrectListWithTableData_passingASelectStatementWithAWithStatementReferencingAPartOfTheWithStatement() {
-			assertEquals(List.of(TABLE_C, TABLE_B, TABLE_A),
+			assertEquals(List.of(TABLE_A, TABLE_B, TABLE_C),
 					unitUnderTest.extract("with " + WITH_C.getName() + " as (select * from " + TABLE_C.getName() + "), "
 							+ WITH_VIEW_B.getName() + " as (select * from " + TABLE_B.getName() + ", "
 							+ WITH_C.getName() + ") select * from " + TABLE_A.getName() + ", " + TABLE_B.getName()));
