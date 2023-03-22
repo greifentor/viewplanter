@@ -3,27 +3,21 @@ package de.ollie.viewplanter.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.ollie.viewplanter.core.extract.port.ViewInfoReaderPort;
 import de.ollie.viewplanter.jdbc.model.JDBCConnectionData;
+import lombok.RequiredArgsConstructor;
 
-abstract class AbstractSQLViewInfoReaderAdapter implements ViewInfoReaderPort {
+@RequiredArgsConstructor
+public class SQLViewInfoReaderAdapter implements ViewInfoReaderPort {
 
-	static final String VIEW_NAME = "view_name";
-	static final String VIEW_STATEMENT = "view_statement";
+	public static final String VIEW_NAME = "view_name";
+	public static final String VIEW_STATEMENT = "view_statement";
 
-	/**
-	 * @param statement  A statement to access the database.
-	 * @param schemeName The name of the scheme whose view information are to read.
-	 * @return A result set with fields "view_name" (String) which contains the name of a view and "view_statement" with
-	 *         the content of the view.
-	 * @throws SQLException In case of something went wrong while creating the result set.
-	 */
-	abstract ResultSet getReadViewDataResultSet(Statement statement, String schemeName) throws SQLException;
+	private final ViewDataResultSetReader viewDataResultSetReader;
 
 	@Override
 	public List<ViewInfoData> read(Parameters parameters) {
@@ -41,7 +35,7 @@ abstract class AbstractSQLViewInfoReaderAdapter implements ViewInfoReaderPort {
 									jdbcConnectionData.getUserName(),
 									jdbcConnectionData.getPassword());
 			statement = connection.createStatement();
-			resultSet = getReadViewDataResultSet(statement, jdbcConnectionData.getSchemeName());
+			resultSet = viewDataResultSetReader.readResultSet(statement, jdbcConnectionData.getSchemeName());
 			while (resultSet.next()) {
 				result
 						.add(
