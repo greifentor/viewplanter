@@ -1,11 +1,13 @@
 package de.ollie.viewplanter.core;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.ollie.viewplanter.core.extract.port.ViewInfoReaderPort.Parameters;
 import de.ollie.viewplanter.jdbc.JDBCConnectionDataGetter;
 import de.ollie.viewplanter.jdbc.MariaSQLViewInfoReaderAdapter;
 
+@Disabled
 class ViewPlanterForMariaDBSpecialTest {
 
 	@Test

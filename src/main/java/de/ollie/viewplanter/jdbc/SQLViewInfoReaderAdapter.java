@@ -1,13 +1,12 @@
 package de.ollie.viewplanter.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.ollie.viewplanter.core.extract.port.ViewInfoReaderPort;
+import de.ollie.viewplanter.jdbc.StatementFactory.StatementData;
 import de.ollie.viewplanter.jdbc.model.JDBCConnectionData;
 import lombok.RequiredArgsConstructor;
 
@@ -17,25 +16,22 @@ public class SQLViewInfoReaderAdapter implements ViewInfoReaderPort {
 	public static final String VIEW_NAME = "view_name";
 	public static final String VIEW_STATEMENT = "view_statement";
 
+	private final StatementFactory statementFactory;
 	private final ViewDataResultSetReader viewDataResultSetReader;
 
 	@Override
 	public List<ViewInfoData> read(Parameters parameters) {
 		List<ViewInfoData> result = new ArrayList<>();
 		Connection connection = null;
-		Statement statement = null;
+		StatementData statementData = null;
 		ResultSet resultSet = null;
 		try {
 			JDBCConnectionData jdbcConnectionData = new JDBCConnectionDataGetter().getFromParameters(parameters);
 			Class.forName(jdbcConnectionData.getDriverClassName());
-			connection =
-					DriverManager
-							.getConnection(
-									jdbcConnectionData.getUrl(),
-									jdbcConnectionData.getUserName(),
-									jdbcConnectionData.getPassword());
-			statement = connection.createStatement();
-			resultSet = viewDataResultSetReader.readResultSet(statement, jdbcConnectionData.getSchemeName());
+			statementData = statementFactory.createStatement(jdbcConnectionData);
+			resultSet =
+					viewDataResultSetReader
+							.readResultSet(statementData.getStatement(), jdbcConnectionData.getSchemeName());
 			while (resultSet.next()) {
 				result
 						.add(
@@ -52,12 +48,12 @@ public class SQLViewInfoReaderAdapter implements ViewInfoReaderPort {
 				throw new RuntimeException("Error while closing the result set: " + e.getMessage());
 			}
 			try {
-				statement.close();
+				statementData.getStatement().close();
 			} catch (Exception e) {
 				throw new RuntimeException("Error while closing the statement: " + e.getMessage());
 			}
 			try {
-				connection.close();
+				statementData.getConnection().close();
 			} catch (Exception e) {
 				throw new RuntimeException("Error while closing the connection: " + e.getMessage());
 			}

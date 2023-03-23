@@ -7,7 +7,7 @@ import java.sql.Statement;
 public class MariaSQLViewInfoReaderAdapter extends SQLViewInfoReaderAdapter {
 
 	public MariaSQLViewInfoReaderAdapter() {
-		super(new ViewDataResultSetReader() {
+		super(new StatementFactory(), new ViewDataResultSetReader() {
 			@Override
 			public ResultSet readResultSet(Statement statement, String schemeName) throws SQLException {
 				String sql =
