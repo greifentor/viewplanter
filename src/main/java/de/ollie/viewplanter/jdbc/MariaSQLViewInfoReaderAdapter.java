@@ -1,62 +1,20 @@
 package de.ollie.viewplanter.jdbc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import de.ollie.viewplanter.core.extract.port.ViewInfoReaderPort;
-import de.ollie.viewplanter.jdbc.model.JDBCConnectionData;
+public class MariaSQLViewInfoReaderAdapter extends SQLViewInfoReaderAdapter {
 
-public class MariaSQLViewInfoReaderAdapter implements ViewInfoReaderPort {
-
-	@Override
-	public List<ViewInfoData> read(Parameters parameters) {
-		List<ViewInfoData> result = new ArrayList<>();
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet resultSet = null;
-		try {
-			JDBCConnectionData jdbcConnectionData = new JDBCConnectionDataGetter().getFromParameters(parameters);
-			Class.forName(jdbcConnectionData.getDriverClassName());
-			connection = DriverManager.getConnection(jdbcConnectionData.getUrl(),
-					jdbcConnectionData.getUserName(),
-					jdbcConnectionData.getPassword());
-			statement = connection.createStatement();
-			String sql =
-					"select TABLE_NAME as view_name, VIEW_DEFINITION as view_statement from INFORMATION_SCHEMA.VIEWS where TABLE_SCHEMA = '"
-					+ jdbcConnectionData.getSchemeName() + "'";
-			resultSet = statement
-					.executeQuery(sql);
-			while (resultSet.next()) {
-				result
-						.add(
-								new ViewInfoData()
-										.setName(resultSet.getString("view_name"))
-						.setViewStatement(resultSet.getString("view_statement")));
+	public MariaSQLViewInfoReaderAdapter() {
+		super(new StatementFactory(), new ViewDataResultSetReader() {
+			@Override
+			public ResultSet readResultSet(Statement statement, String schemeName) throws SQLException {
+				String sql =
+						"select TABLE_NAME as " + VIEW_NAME + ", VIEW_DEFINITION as " + VIEW_STATEMENT
+								+ " from INFORMATION_SCHEMA.VIEWS where TABLE_SCHEMA = '" + schemeName + "'";
+				return statement.executeQuery(sql);
 			}
-		} catch (Exception e) {
-			throw new RuntimeException("There went something wrong while reading the view data: " + e.getMessage());
-		} finally {
-			try {
-				resultSet.close();
-			} catch (Exception e) {
-				throw new RuntimeException("Error while closing the result set: " + e.getMessage());
-			}
-			try {
-				statement.close();
-			} catch (Exception e) {
-				throw new RuntimeException("Error while closing the statement: " + e.getMessage());
-			}
-			try {
-				connection.close();
-			} catch (Exception e) {
-				throw new RuntimeException("Error while closing the connection: " + e.getMessage());
-			}
-		}
-		return result;
+		});
 	}
-
 }
